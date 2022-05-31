@@ -9,6 +9,17 @@ https://user-images.githubusercontent.com/102366289/171194209-809f0181-6c15-47eb
 
 https://user-images.githubusercontent.com/102366289/171194283-3c90da46-f0f0-450b-b733-6efd4f4660db.mp4
 
+NativeAd.recordCustomClickGesture() invoked when:
+1. NativeAdView.mediaView is clicked
+2. NativeAdView.callToActionView is clicked
+everything works fine. Ad-click is imitated
+
+NativeAd.recordCustomClickGesture() invoked when:
+1. NativeAdView is swiped left
+2. Button inside NativeAdView is clicked (not part of NativeAdView elements)
+3. Button outside NativeAdView is clicked
+Each of them does not imitate ad-click.
+Logcat shows following message:
 ```
 I/Ads: Received log message: <Google:HTML> Custom clicks must be reported immediately after they are detected.
 ```
