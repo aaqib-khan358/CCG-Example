@@ -12,12 +12,14 @@ https://user-images.githubusercontent.com/102366289/171194283-3c90da46-f0f0-450b
 NativeAd.recordCustomClickGesture() invoked when:
 1. NativeAdView.mediaView is clicked
 2. NativeAdView.callToActionView is clicked
-everything works fine. Ad-click is imitated
+
+Everything works fine. Ad-click is imitated
 
 NativeAd.recordCustomClickGesture() invoked when:
 1. NativeAdView is swiped left
 2. Button inside NativeAdView is clicked (not part of NativeAdView elements)
 3. Button outside NativeAdView is clicked
+
 Each of them does not imitate ad-click.
 Logcat shows following message:
 ```
