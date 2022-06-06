@@ -102,8 +102,6 @@ class MainActivity : AppCompatActivity() {
         val adView = layoutInflater.inflate(R.layout.ad_layout, null) as NativeAdView
         populateNativeAdView(adView, nativeAd)
         if (enableCCGOption.isChecked) {
-            setupSwipeGesture(adView)
-            adView.setOnClickListener { manualAdClick() }
             adView.mediaView?.setOnClickListener { manualAdClick() }
             adView.callToActionView?.setOnClickListener { manualAdClick() }
 
@@ -111,8 +109,27 @@ class MainActivity : AppCompatActivity() {
             btnWithinAdView.visibility = View.VISIBLE
             btnWithinAdView.setOnClickListener { manualAdClick() }
         }
+
         adFrame.removeAllViews()
-        adFrame.addView(adView)
+        if (enableCCGOption.isChecked) {
+            val frameLayout = object : FrameLayout(this) {
+                override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+                    onTouchEvent(ev)
+                    return false
+                }
+
+                @SuppressLint("ClickableViewAccessibility")
+                override fun onTouchEvent(ev: MotionEvent): Boolean {
+                    // Relay the touch event to your custom click gesture detector.
+                    handleTouchEvent(adView, ev)
+                    return false
+                }
+            }
+            frameLayout.addView(adView)
+            adFrame.addView(frameLayout)
+        } else {
+            adFrame.addView(adView)
+        }
     }
 
     private fun populateNativeAdView(adView: NativeAdView, nativeAd: NativeAd) {
@@ -215,14 +232,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun setupSwipeGesture(touchView: View) {
-        touchView.setOnTouchListener { _, event ->
-            handleTouchEvent(touchView, event)
-            false
-        }
-    }
-
     private fun handleTouchEvent(touchView: View, event: MotionEvent) {
         val displayMetrics = resources.displayMetrics
         val cardWidth = touchView.width
@@ -230,7 +239,7 @@ class MainActivity : AppCompatActivity() {
 
         when (event.action) {
             MotionEvent.ACTION_UP -> {
-                if (touchView.x < MIN_SWIPE_DISTANCE){
+                if (touchView.x < MIN_SWIPE_DISTANCE) {
                     log("swiped left")
                     manualAdClick()
                 }
