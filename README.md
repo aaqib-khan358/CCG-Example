@@ -13,7 +13,8 @@ NativeAd.recordCustomClickGesture() invoked when:
 1. NativeAdView.mediaView is clicked
 2. NativeAdView.callToActionView is clicked
 3. NativeAdView is swiped left (need to invoke in touch event of the viewgroup that forwards the onInterceptTouchEvent)
-** Note: ** * Swipe needs to initiate on either NativeAdView or its elements *
+
+**Note:** *Swipe needs to initiate on either NativeAdView or its elements*
 
 https://user-images.githubusercontent.com/102366289/172149869-a9b870d5-318a-49cc-8f47-67a334de80f0.mp4
 
