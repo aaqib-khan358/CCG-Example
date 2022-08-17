@@ -20,29 +20,32 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />
 
-        <CheckBox
-            android:id="@+id/option_enable_ccg"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Enable CCG" />
+            android:layout_marginTop="16dp">
 
-        <Button
-            android:id="@+id/btn_record_ccg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:text="Record CCG"
-            android:visibility="gone" />
+            <Button
+                android:id="@+id/btn_check_ccg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:text="Check CCG" />
 
-        <Button
-            android:id="@+id/btn_refresh_ad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:text="Refresh Ad" />
+            <Button
+                android:id="@+id/btn_enable_ccg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Enable CCG" />
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"

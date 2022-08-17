@@ -17,10 +17,9 @@ import kotlin.math.min
 class MainActivity : AppCompatActivity() {
     private lateinit var adLoader: AdLoader
     private lateinit var adFrame: FrameLayout
-    private lateinit var btnRefresh: Button
     private lateinit var statusText: TextView
-    private lateinit var enableCCGOption: CheckBox
-    private lateinit var btnRecordCCG: Button
+    private lateinit var btnCheckCCG: Button
+    private lateinit var btnEnableCCG: Button
 
     private val logMessages: MutableList<String> = mutableListOf()
     private val sdf = SimpleDateFormat("hh:mm:ss")
@@ -32,25 +31,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         adFrame = findViewById(R.id.ad_frame)
-        btnRefresh = findViewById(R.id.btn_refresh_ad)
         statusText = findViewById(R.id.status_text)
-        enableCCGOption = findViewById(R.id.option_enable_ccg)
-        btnRecordCCG = findViewById(R.id.btn_record_ccg)
+        btnCheckCCG = findViewById(R.id.btn_check_ccg)
+        btnEnableCCG = findViewById(R.id.btn_enable_ccg)
 
         initAdLoader()
-        enableCCGOption.setOnCheckedChangeListener { _, checked ->
-            btnRecordCCG.visibility = if (checked) View.VISIBLE else View.GONE
-        }
-        btnRecordCCG.setOnClickListener { manualAdClick() }
-        btnRefresh.setOnClickListener { refreshAd() }
-        refreshAd()
+        btnCheckCCG.setOnClickListener { checkCCG() }
+        btnEnableCCG.setOnClickListener { enableCCG() }
+        loadAd()
     }
 
     private fun manualAdClick() = mNativeAd?.recordCustomClickGesture()
 
-    private fun refreshAd() {
-        btnRefresh.isEnabled = false
-        loadAd()
+    private fun checkCCG() =
+        log("isCustomClickGestureEnabled = ${mNativeAd?.isCustomClickGestureEnabled}")
+
+    private fun enableCCG() {
+        mNativeAd?.enableCustomClickGesture()
+        log("Called enableCustomClickGesture()")
     }
 
     private fun initAdLoader() {
@@ -61,9 +59,6 @@ class MainActivity : AppCompatActivity() {
                     return@forNativeAd
                 }
                 mNativeAd = nativeAd
-                if (enableCCGOption.isChecked) {
-                    nativeAd.enableCustomClickGesture()
-                }
                 renderAd(nativeAd)
             }
             .withAdListener(object : AdListener() {
@@ -76,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                    btnRefresh.isEnabled = true
                     log("onAdFailedToLoad: $error")
                 }
 
@@ -101,35 +95,23 @@ class MainActivity : AppCompatActivity() {
     private fun renderAd(nativeAd: NativeAd) {
         val adView = layoutInflater.inflate(R.layout.ad_layout, null) as NativeAdView
         populateNativeAdView(adView, nativeAd)
-        if (enableCCGOption.isChecked) {
-            adView.mediaView?.setOnClickListener { manualAdClick() }
-            adView.callToActionView?.setOnClickListener { manualAdClick() }
-
-            val btnWithinAdView = adView.findViewById<Button>(R.id.btn_within_adview)
-            btnWithinAdView.visibility = View.VISIBLE
-            btnWithinAdView.setOnClickListener { manualAdClick() }
-        }
 
         adFrame.removeAllViews()
-        if (enableCCGOption.isChecked) {
-            val frameLayout = object : FrameLayout(this) {
-                override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-                    onTouchEvent(ev)
-                    return false
-                }
-
-                @SuppressLint("ClickableViewAccessibility")
-                override fun onTouchEvent(ev: MotionEvent): Boolean {
-                    // Relay the touch event to your custom click gesture detector.
-                    handleTouchEvent(adView, ev)
-                    return false
-                }
+        val frameLayout = object : FrameLayout(this) {
+            override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+                onTouchEvent(ev)
+                return false
             }
-            frameLayout.addView(adView)
-            adFrame.addView(frameLayout)
-        } else {
-            adFrame.addView(adView)
+
+            @SuppressLint("ClickableViewAccessibility")
+            override fun onTouchEvent(ev: MotionEvent): Boolean {
+                // Relay the touch event to your custom click gesture detector.
+                handleTouchEvent(adView, ev)
+                return false
+            }
         }
+        frameLayout.addView(adView)
+        adFrame.addView(frameLayout)
     }
 
     private fun populateNativeAdView(adView: NativeAdView, nativeAd: NativeAd) {
@@ -221,14 +203,12 @@ class MainActivity : AppCompatActivity() {
                 override fun onVideoEnd() {
                     // Publishers should allow native ads to complete video playback before
                     // refreshing or replacing them with another ad in the same UI location.
-                    btnRefresh.isEnabled = true
                     log("Video status: Video playback has ended.")
                     super.onVideoEnd()
                 }
             }
         } else {
             log("Video status: Ad does not contain a video asset.")
-            btnRefresh.isEnabled = true
         }
     }
 
