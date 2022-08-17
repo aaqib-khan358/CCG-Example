@@ -258,7 +258,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val AD_UNIT_ID = "/6499/example/native"
+        private const val AD_UNIT_ID = "/21617135166/Badoo_Native/Badoo_AND_Native_Encounters_CCG"
         private const val MIN_SWIPE_DISTANCE = -450
     }
 }
